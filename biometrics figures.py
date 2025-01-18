@@ -30,6 +30,9 @@ def locFDRS_GWAS_thread(Z,cov,B,b,pi,tau):
   
   
   return(locFDR);
+
+##########################################################################################################################
+
 ### FGN Covariance
 import numpy as np
 np.random.seed(40) 
@@ -300,3 +303,91 @@ ax2.legend(prop={'size': 15});  # Add a legend.
 plt.show()
 
 fig.savefig(fname = 'Equi0.8_point&hist.png')
+
+
+#####################################################################################################
+### Banded(1) Covariance
+np.random.seed(42)
+rho = 0.5
+K = 1000
+cov = np.diag(np.ones(K));
+for i in range(K-1):
+  cov[i,i+1] = cov[i+1,i] = rho;
+
+pi = 0.3;
+tau = 2;
+b = 0.2;
+H = np.random.binomial(1,pi,size=K);
+Z = np.multiply(H,b) + np.matmul(np.linalg.cholesky(cov+np.multiply(np.diag(H),pow(tau,2))),np.random.standard_normal(K));
+
+lcfdr_0 = locFDRS_GWAS_thread(Z,cov,0,b,pi,tau);
+lcfdr_1 = locFDRS_GWAS_thread(Z,cov,1,b,pi,tau);
+lcfdr_2 = locFDRS_GWAS_thread(Z,cov,2,b,pi,tau);
+lcfdr_3 = locFDRS_GWAS_thread(Z,cov,3,b,pi,tau);
+lcfdr_4 = locFDRS_GWAS_thread(Z,cov,4,b,pi,tau);
+lcfdr_5 = locFDRS_GWAS_thread(Z,cov,5,b,pi,tau);
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+# Note that even in the OO-style, we use `.pyplot.figure` to create the Figure.
+fig, (ax1,ax2) = plt.subplots(1,2,figsize=(20, 5))
+ax1.scatter((lcfdr_0), (lcfdr_1), label='$T_0$ vs $T_1$')  # Plot some data on the axes.
+ax1.scatter((lcfdr_1), (lcfdr_2), label='$T_1$ vs $T_2$')  # Plot more data on the axes...
+ax1.scatter((lcfdr_2), (lcfdr_3) , label='$T_2$ vs $T_3$')  # ... and some more.
+ax1.scatter((lcfdr_3), (lcfdr_4) , label='$T_3$ vs $T_4$')  # ... and some more.
+ax1.scatter((lcfdr_4), (lcfdr_5) , label='$T_4$ vs $T_5$')  # ... and some more.
+# ax1.plot((lcfdr_5), (lcfdr_6) , label='T5 vs T6')  # ... and some more.
+ax1.set_xlabel('$T_N$')  # Add an x-label to the axes.
+ax1.set_ylabel('$T_{N+1}$')  # Add a y-label to the axes.
+#ax1.set_title("AR(1), \rho=0.8, Ordering of the locfdrs")  # Add a title to the axes.
+ax1.legend(prop={'size': 15});  # Add a legend.
+
+from scipy.stats import gaussian_kde
+# Note that even in the OO-style, we use `.pyplot.figure` to create the Figure.
+#fig, (ax1) = plt.subplots(1,1,figsize=(10, 12))
+density = gaussian_kde(lcfdr_0)
+xs = np.linspace(0,1,500)
+density.covariance_factor = lambda : .25
+density._compute_covariance()
+ax2.plot(xs,density(xs),label='$T_0$ ')
+######
+density = gaussian_kde(lcfdr_1)
+xs = np.linspace(0,1,500)
+density.covariance_factor = lambda : .25
+density._compute_covariance()
+ax2.plot(xs,density(xs),label='$T_1$' )
+###### 
+density = gaussian_kde(lcfdr_2)
+xs = np.linspace(0,1,500)
+density.covariance_factor = lambda : .25
+density._compute_covariance()
+ax2.plot(xs,density(xs),label='$T_2$')
+######
+density = gaussian_kde(lcfdr_3)
+xs = np.linspace(0,1,500)
+density.covariance_factor = lambda : .25
+density._compute_covariance()
+ax2.plot(xs,density(xs),label='$T_3$')
+######
+density = gaussian_kde(lcfdr_4)
+xs = np.linspace(0,1,500)
+density.covariance_factor = lambda : .25
+density._compute_covariance()
+ax2.plot(xs,density(xs),label='$T_4$')
+######
+density = gaussian_kde(lcfdr_5)
+xs = np.linspace(0,1,500)
+density.covariance_factor = lambda : .25
+density._compute_covariance()
+ax2.plot(xs,density(xs),label='$T_5$')
+
+ax2.set_xlabel('$T_N$')  # Add an x-label to the axes.
+#ax2.set_ylabel('$T_{N+1}$')  # Add a y-label to the axes.
+#ax2.set_title("long-range, \rho=0.8, Ordering of the locfdrs")  # Add a title to the axes.
+ax2.legend(prop={'size': 15});  # Add a legend.
+
+#plt.plot(figsize=(10,12))
+plt.show()
+
+fig.savefig(fname = 'Banded0.5_point&hist.png')
