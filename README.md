@@ -106,9 +106,9 @@
    - ultimately the notebook shows the number of rejections by our method and off-the-shelf competitors.
 11) Running the Code "biometrics figures.py": This code generates all the figures in Figure 1. Run the code without any modifications and you will get the figures in PNG format.
 12) Reproducing the GWAS example in the paper
-    - Running the Code "LD_Pruning.ipynb": This code prepares data for GWAS. Step by step guide is given in the notebook with the output.
-    - Running the code "GWAS_biometrics.ipynb": This code runs GWAS analysis with input data prepared in the last step. Output is given in the notebook.
-    - Running the code "biometrics_GWAS_analysis.ipynb": This code can be used to generate Figure 2 and Table 4. Step by step guide is given in the notebook with the output.
+    - Running the Code "LD_Pruning.ipynb": This code prepares data for GWAS. A step-by-step guide with the output is given in the notebook.
+    - Running the code "GWAS_prepz_biometrics.R2.ipynb": This code runs GWAS analysis with input data prepared in the last step. Sample output for chromosome 21 is given in the notebook.
+    - Running the code "GWAS_analysis_biometrics.R2.ipynb": This code can be used to generate Figure 2 and Table 4. A step-by-step guide with the output is given in the notebook.
 13) The folder "ancillary data" contains the data/functions that you need to keep in the working directory to run the codes.
 14) The folder "paper data" contains the data that you will get after running our code.
 
